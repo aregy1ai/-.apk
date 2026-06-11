@@ -39,8 +39,9 @@ class DownloadTask(
                 }
 
                 input = conn.inputStream
-                val buffer = ByteArray(32 * 1024)
+                val buffer = ByteArray(64 * 1024)
 
+                var lastUpdate = System.currentTimeMillis()
                 while (!isCancelled) {
                     while (isPaused && !isCancelled) delay(200)
                     val read = input.read(buffer)
@@ -50,14 +51,18 @@ class DownloadTask(
                     downloaded += read
 
                     val progress = if (total > 0) ((downloaded * 100) / total).toInt() else 0
-                    withContext(Dispatchers.Main) {
-                        onUpdate(
-                            DownloadEntity(
-                                id, url, file.name,
-                                progress, downloaded, total,
-                                DownloadStatus.DOWNLOADING
+                    val now = System.currentTimeMillis()
+                    if (now - lastUpdate > 100) {
+                        lastUpdate = now
+                        withContext(Dispatchers.Main) {
+                            onUpdate(
+                                DownloadEntity(
+                                    id, url, file.name,
+                                    progress, downloaded, total,
+                                    DownloadStatus.DOWNLOADING
+                                )
                             )
-                        )
+                        }
                     }
                 }
 

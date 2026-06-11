@@ -3,6 +3,6 @@
     <item
         android:width="66dp"
         android:height="66dp"
-        android:drawable="@drawable/download_manager_icon_1781206221057"
+        android:drawable="@drawable/tahmil_app_icon_1781207239778"
         android:gravity="center" />
 </layer-list>
